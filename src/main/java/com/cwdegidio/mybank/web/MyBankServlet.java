@@ -1,10 +1,11 @@
 package com.cwdegidio.mybank.web;
 
 
-import com.cwdegidio.mybank.context.Application;
+import com.cwdegidio.mybank.context.MyBankApplicationConfiguration;
 import com.cwdegidio.mybank.model.Transaction;
 import com.cwdegidio.mybank.service.TransactionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,8 +17,16 @@ import java.util.List;
 
 public class MyBankServlet extends HttpServlet {
 
-    private TransactionService transactionService = Application.transactionService;
-    private ObjectMapper objectMapper = Application.objectMapper;
+    private TransactionService transactionService;
+    private ObjectMapper objectMapper;
+
+    @Override
+    public void init() {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(MyBankApplicationConfiguration.class);
+
+        this.transactionService = ctx.getBean(TransactionService.class);
+        this.objectMapper = ctx.getBean(ObjectMapper.class);
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
